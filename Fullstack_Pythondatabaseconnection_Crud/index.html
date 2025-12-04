@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Web App - User Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-users"></i> User Management System</h1>
+            <p>Full-stack CRUD application with Flask & MySQL</p>
+        </header>
+        
+        <div class="actions-bar">
+            <a href="{{ url_for('add_user') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus"></i> Add New User
+            </a>
+        </div>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i> {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Users Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2>All Users ({{ users|length }})</h2>
+            </div>
+            
+            {% if users %}
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> ID</th>
+                        <th><i class="fas fa-user"></i> Name</th>
+                        <th><i class="fas fa-birthday-cake"></i> Age</th>
+                        <th><i class="fas fa-map-marker-alt"></i> City</th>
+                        <th><i class="fas fa-cogs"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user[0] }}</td>
+                        <td>{{ user[1] }}</td>
+                        <td>{{ user[2] }}</td>
+                        <td>{{ user[3] }}</td>
+                        <td class="action-buttons">
+                            <a href="{{ url_for('edit_user', user_id=user[0]) }}" 
+                               class="btn btn-sm btn-warning" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ url_for('delete_user', user_id=user[0]) }}" 
+                               class="btn btn-sm btn-danger" 
+                               onclick="return confirm('Are you sure you want to delete {{ user[1] }}?')"
+                               title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-users-slash fa-3x"></i>
+                <h3>No users found</h3>
+                <p>Add your first user using the button above</p>
+                <a href="{{ url_for('add_user') }}" class="btn btn-primary">Get Started</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Auto-hide flash messages after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.transition = 'opacity 0.5s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
